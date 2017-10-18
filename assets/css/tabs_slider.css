@@ -1,0 +1,20 @@
+#slider {
+    left: -262px;
+    height: 80px;
+    position: absolute;
+}
+#tab_slider .li {
+    float: left;
+}
+
+#tab-slider {
+    overflow: hidden;
+    float: left;
+    display: block;
+}
+
+#tab-slider ul.nav-tabs
+{
+    position: relative;
+    left: 0px;
+}
