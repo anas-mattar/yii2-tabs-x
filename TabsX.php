@@ -146,7 +146,8 @@ class TabsX extends Tabs
      * Defaults to empty string (meaning dynamic height).
      */
     public $height = '';
-
+    
+    public $hashVarLoadPosition='';
     /**
      * @var array the HTML attributes for the TabsX container.
      */
