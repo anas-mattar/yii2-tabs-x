@@ -28,9 +28,9 @@ class TabsXAsset extends AssetBundle
     
     public function init()
     {
-        $this->setSourcePath('@vendor/kartik-v/bootstrap-tabs-x');
-        $this->setupAssets('css', ['css/bootstrap-tabs-x']);
-        $this->setupAssets('js', ['js/bootstrap-tabs-x']);
+        $this->setSourcePath('@vendor/kartik-v/yii2-tabs-x/assets/');
+        $this->setupAssets('css', ['css/bootstrap-tabs-x.min', 'css/tabs_slider']);
+        $this->setupAssets('js', ['js/bootstrap-tabs-x.min', 'js/tabs_slider']);
         parent::init();
     }
 }
