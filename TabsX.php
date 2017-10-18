@@ -15,7 +15,6 @@ use yii\helpers\ArrayHelper;
 use yii\bootstrap\Dropdown;
 use yii\bootstrap\Tabs;
 use yii\base\InvalidConfigException;
-use yii\web\View;
 use kartik\base\WidgetTrait;
 
 /**
@@ -109,6 +108,9 @@ class TabsX extends Tabs
      * Large sized tabs widget
      */
     const SIZE_LARGE = 'lg';
+
+
+
 
     /**
      * @var string the position of the tabs with respect to the tab content Should be one of the [[TabsX::POS]]
@@ -205,13 +207,6 @@ class TabsX extends Tabs
      * @var string the crumb separator for the dropdown headers in the print view when `printHeaderCrumbs` is `true`
      */
     public $printCrumbSeparator = ' &raquo; ';
-    
-    /**
-     * @var integer the position where the client JS hash variables for the TabsX widget will be loaded. 
-     * Defaults to `View::POS_HEAD`. This can be set to `View::POS_READY` for specific scenarios like when
-     * rendering the widget via `renderAjax`.
-     */
-    public $hashVarLoadPosition = View::POS_HEAD;
 
     /**
      * @var string the hashed global variable name storing the pluginOptions
@@ -228,6 +223,16 @@ class TabsX extends Tabs
      */
     protected $_encOptions = '';
 
+
+
+
+    public $is_slider=false;
+
+    public $widthItem='';
+
+    public $maxShowItems=10;
+
+
     /**
      * @inheritdoc
      */
@@ -242,6 +247,7 @@ class TabsX extends Tabs
      */
     public function initWidget()
     {
+
         if (empty($this->containerOptions['id'])) {
             $this->containerOptions['id'] = $this->options['id'] . '-container';
         }
@@ -249,6 +255,7 @@ class TabsX extends Tabs
             $this->containerOptions['data-enable-cache'] = "false";
         }
         $this->registerAssets();
+
         Html::addCssClass($this->options, 'nav ' . $this->navType);
         if ($this->printable) {
             Html::addCssClass($this->options, 'hidden-print');
@@ -365,9 +372,28 @@ class TabsX extends Tabs
             }
             $headers[] = Html::tag('li', $header, $headerOptions);
         }
-        $outHeader = Html::tag('ul', implode("\n", $headers), $this->options);
+        if($this->is_slider) {
+            $fix_width_slider = 'width:' . (($this->maxShowItems) * $this->widthItem) . 'px';
+            $fix_width_tabs_slider = 'width:' . ((($this->maxShowItems-1)) * $this->widthItem) . 'px';
+            $ul_width = 'width:' . (count($this->items) * $this->widthItem) . 'px';
+            $this->options['style'] = $ul_width;
+            $outHeader = Html::tag('ul', implode("\n", $headers), $this->options);
+            $slider_left = '<div class="left"><span class=" glyphicon glyphicon-menu-left" aria-hidden="true"></span></div>' ;
+            $slider_right =  '<div class="right"><span class="glyphicon  glyphicon-menu-right" aria-hidden="true"></span></div>';
+            $outHeader = Html::tag('div', $outHeader, ['id' => 'tab-slider', 'style' => $fix_width_tabs_slider]);
+            $outHeader=$slider_left.$outHeader.$slider_right;
+            $outHeader = Html::tag('div', $outHeader, ['id' => 'slider', 'style' => $fix_width_slider]);
+            echo "<script> var counterSlider='" .(count($this->items)-$this->maxShowItems). "';</script>";
+            echo "<script> var stopPosition='" .($this->widthItem). "';</script>";
+        }
+        else {
+            $outHeader = Html::tag('ul', implode("\n", $headers), $this->options);
+        }
         if ($this->renderTabContent) {
-            $outPane = Html::beginTag('div', ['class' => 'tab-content' . $this->getCss('printable', $this->printable)]);
+            $css='';
+            if($this->is_slider)
+                $css=' tabs_slider ';
+            $outPane = Html::beginTag('div', ['class' => 'tab-content'.$css . $this->getCss('printable', $this->printable)]);
             foreach ($panes as $i => $pane) {
                 if ($this->printable) {
                     $outPane .= Html::tag('div', ArrayHelper::getValue($labels, $i), $this->printHeaderOptions) . "\n";
@@ -379,6 +405,8 @@ class TabsX extends Tabs
         } else {
             $tabs = $outHeader;
         }
+
+        //var_dump($tabs);die();
         return Html::tag('div', $tabs, $this->containerOptions);
     }
 
